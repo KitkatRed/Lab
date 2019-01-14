@@ -20,19 +20,42 @@ const incomplete= {
     searchText:''
 }
 
+let ischecked =false
+
 const renderTask= function(todo,incomplete){
     const filteredTask= todo.filter(function(task){
         return task.text.toLowerCase().includes(incomplete.searchText.toLowerCase())
     })
 
     document.querySelector('#displayfiltered').innerHTML =''
-
+    document.querySelector('#header2').innerHTML =''
+    let index=0
     filteredTask.forEach(function (element){
-        const newElement = document.createElement('p')
-        newElement.textContent=element.text
-        document.querySelector('#displayfiltered').appendChild(newElement)
-
+    
+        if (ischecked==false){
+            if (element.completed==false){
+                index++
+            }
+            
+            const newElement = document.createElement('p')
+            newElement.textContent=element.text
+            document.querySelector('#displayfiltered').appendChild(newElement)
+            
+        }else{
+            if(element.completed==false){
+                index++
+                const newElement = document.createElement('p')
+                newElement.textContent=element.text
+                document.querySelector('#displayfiltered').appendChild(newElement)
+        
+            }
+            
+        }
+        
     })
+    const newParagraph = document.createElement('p')
+            newParagraph.textContent=`Total incomplete tasks: ${index}`
+            document.querySelector('#header2').appendChild(newParagraph)
 }
 
 renderTask(todo,incomplete)
@@ -63,10 +86,19 @@ document.querySelector('#formDeleteTask').addEventListener('submit',function(e){
     const indexoftheDeleteItem =todo.findIndex(x=>x.text==e.target.elements.deleteTaskinput.value)
 
     //console.log("index of deleteItem: "+indexoftheDeleteItem)
-
-    todo.splice(indexoftheDeleteItem,1)
+    if (indexoftheDeleteItem!=-1){
+        todo.splice(indexoftheDeleteItem,1)
+    }
+    
     //console.log("new array2: "+todo)
     
     e.target.elements.deleteTaskinput.value=''
+    renderTask(todo,incomplete)
+})
+
+
+document.querySelector('#checkForhidCompleted').addEventListener('change',function(e){
+    ischecked=e.target.checked
+    console.log("ischecked: "+ischecked)
     renderTask(todo,incomplete)
 })
